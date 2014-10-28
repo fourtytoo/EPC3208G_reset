@@ -14,7 +14,7 @@
 #define ACTIVE_LENGTH 10
 #define BLINK_SPEED 300
 
-int relayPin = 8;
+int relayPin = 11;
 int buttonPin = 12;		// digital input
 int ledPin = 13;
 
