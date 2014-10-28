@@ -64,6 +64,8 @@ loop ()
   if (activated > 0)
     {
       activated--;
+      if (activated % 300 == 0)
+	digitalWrite(ledPin, !digitalRead(ledPin)); // blink the LED
       if (!activated)
 	{
 	  digitalWrite(ledPin, LOW);
