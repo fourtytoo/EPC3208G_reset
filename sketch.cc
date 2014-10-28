@@ -57,7 +57,7 @@ loop ()
     Serial.println(activated);
   if (digitalRead(buttonPin) == HIGH || command == 'T')
     {
-      activated = ACTIVE_LENGTH;
+      activated = ACTIVE_LENGTH * 1000;
       digitalWrite(relayPin, HIGH); 
       digitalWrite(ledPin, HIGH);
     }
@@ -69,6 +69,6 @@ loop ()
 	  digitalWrite(ledPin, LOW);
 	  digitalWrite(relayPin, LOW);
 	}
-      delay(1000);
+      delay(1);
     }
 }
