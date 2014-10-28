@@ -11,7 +11,7 @@
 #include <Arduino.h>
 
 // how long after a push the relay should be activated.
-#define ACTIVE_LENGTH 5
+#define ACTIVE_LENGTH 10
 
 int relayPin = 8;
 int buttonPin = 12;		// digital input
