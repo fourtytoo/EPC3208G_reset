@@ -6,55 +6,37 @@ TARGET = sketch
 SERIALDEV = /dev/cuaU0
 include ./arduino.mk
 
-# RM = rm -f
-# # The CPU: either atmega168 or atmega8
+# The programmer is hooked to another laptop, so we need to copy first
+# to that host and then remotely run avrdude.
+#
+PROGRAMMER_HOST=hell
+
+# The CPU: atmega328, atmega328p, atmega168 or atmega8
 MCU = atmega328p
-# # adjust this to the CPU frequency
-# F_CPU = 16000000
-# CFLAGS = -Wall -Os -mmcu=$(MCU) -DF_CPU=$(F_CPU) -gstabs -I$(ARDUINO)
-# LDFLAGS = 
-# LDLIBS =-lm -L$(ARDUINO) -larduino
-# CC = avr-gcc -std=gnu99
-# # not used
-# CXX = avr-c++
-# OBJCOPY = avr-objcopy
-AVRDUDE = avrdude
-# # see also usbasp
-PROGRAMMER = arduino
-# PROGRAMMER = stk500v1
-# ARDUINO = /usr/local/arduino
-AVRDUDE_PORT = /dev/cuaU0
-# SIZE = avr-size
+
+#
+# For avrdude to work with the parallel port ISP on FreeBSD you need
+# to be part of the wheel group and add the following to
+# /etc/devfs.conf:
+#	perm    ppi0    0660
+#
+# For avrdude to work with the USB interface on FreeBSD you need to be
+# part of the wheel group and add something like the following to
+# /etc/devfs.rules:
+#	[localrules=10]
+#	add path 'cuaU*' mode 0660 group wheel
+#
+# assuming that your default ruleset in rc.conf is localrules:
+#	devfs_system_ruleset="localrules"
 
 
-# default: all
+# for the ISP programmer
+upld-isp: sketch.hex
+	scp sketch.hex $(PROGRAMMER_HOST):
+	ssh $(PROGRAMMER_HOST) $(AVRDUDE) -F -V -p $(MCU) -P /dev/ppi0 -c pony-stk200 -U flash:w:sketch.hex
 
-# all: sketch.hex
+#for the USB interface
+upld-usb: sketch.hex
+	scp sketch.hex $(PROGRAMMER_HOST):
+	ssh $(PROGRAMMER_HOST) $(AVRDUDE) -F -V -p $(MCU) -P /dev/cuaU0 -c arduino -U flash:w:sketch.hex
 
-# sketch.bin: sketch.o
-# 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ sketch.o $(LDLIBS)
-
-# clean:
-# 	$(RM) *.o *.bin *.hex
-
-# dist: clean
-
-uplod: sketch.hex
-	$(AVRDUDE) -F -V -p $(MCU) -P $(AVRDUDE_PORT) -c $(PROGRAMMER) -b 19200 -U flash:w:sketch.hex
-
-# ######################################################################
-
-# .SUFFIXES: .bin .hex
-
-# .o.bin:
-# 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
-
-# .c.o:
-# 	$(CC) $(CFLAGS) -c $<
-
-# .c.bin:
-# 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $< $(LDLIBS)
-
-# .bin.hex:
-# 	$(OBJCOPY) -R .eeprom -O ihex $< $@
-# 	@$(SIZE) $@
