@@ -18,15 +18,15 @@ int buttonPin = 12;		// digital input
 int ledPin = 13;
 
 void
-blinkLED (int times)
+blinkLED (int times, int ms)
 {
-  int i;
   while (times--)
     {
       digitalWrite(ledPin, HIGH);
-      delay(500);
+      delay(ms);
+      digitalWrite(ledPin, LOW);
+      delay(ms);
     }
-  digitalWrite(ledPin, LOW);
 }
 
 void
@@ -38,7 +38,7 @@ setup ()
   pinMode(buttonPin, INPUT_PULLUP);
   pinMode(relayPin, OUTPUT);
   digitalWrite(relayPin, LOW);
-  blinkLED(3);
+  blinkLED(5, 200);
 }
 
 int activated = 0;
