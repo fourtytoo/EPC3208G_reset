@@ -55,7 +55,7 @@ loop ()
     Serial.println(analogRead(command - '0'));
   if (command == 'S')
     Serial.println(activated);
-  if (digitalRead(buttonPin) == HIGH || command == 'T')
+  if (digitalRead(buttonPin) == LOW || command == 'T')
     {
       activated = ACTIVE_LENGTH * 1000;
       digitalWrite(relayPin, HIGH); 
