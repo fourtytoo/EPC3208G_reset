@@ -38,7 +38,7 @@ setup ()
   pinMode(buttonPin, INPUT_PULLUP);
   pinMode(relayPin, OUTPUT);
   digitalWrite(relayPin, LOW);
-  blinkLED(5, 200);
+  blinkLED(7, 200);
 }
 
 int activated = 0;
