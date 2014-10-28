@@ -1,5 +1,11 @@
 // -*- C++ -*-
 
+/* Commands:
+   0-5 analog pin value
+   S relay status (0=off)
+   T toggle relay
+*/
+
 #include <stdlib.h>
 #include <string.h>
 #include <Arduino.h>
@@ -7,9 +13,9 @@
 // how long after a push the relay should be activated.
 #define ACTIVE_LENGTH 5
 
+int relayPin = 8;
+int buttonPin = 12;		// digital input
 int ledPin = 13;
-int buttonPin = 12;
-int relayPin = 11;
 
 void
 blinkLED (int times)
@@ -29,7 +35,7 @@ setup ()
   Serial.begin(9600);
   pinMode(ledPin, OUTPUT);
   digitalWrite(ledPin, LOW);
-  pinMode(buttonPin, INPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
   pinMode(relayPin, OUTPUT);
   digitalWrite(relayPin, LOW);
   blinkLED(3);
@@ -44,7 +50,12 @@ loop ()
 
   if (Serial.available() > 0)
     command = Serial.read();
-  if (digitalRead(buttonPin) == HIGH || command == 'S')
+  // query analog pin 0-5
+  if (command >= '0' && command <= '5')
+    Serial.println(analogRead(command - '0'));
+  if (command == 'S')
+    Serial.println(activated);
+  if (digitalRead(buttonPin) == HIGH || command == 'T')
     {
       activated = ACTIVE_LENGTH;
       digitalWrite(relayPin, HIGH); 
